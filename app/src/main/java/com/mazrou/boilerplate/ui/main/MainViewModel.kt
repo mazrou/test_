@@ -1,7 +1,8 @@
 package com.mazrou.boilerplate.ui.main
 
 
-import com.mazrou.boilerplate.model.database.RacineModel
+import android.util.Log
+import com.mazrou.boilerplate.model.ui.Ayat
 import com.mazrou.boilerplate.model.ui.Racine
 import com.mazrou.boilerplate.repository.main.Repository
 import com.mazrou.boilerplate.ui.BaseViewModel
@@ -22,20 +23,41 @@ class MainViewModel(
 
     override fun handleNewData(data: MainViewState) {
         data.let {
-            it.racineModelList?.let {
+            it.racineList?.let {
                 setRacine(it)
+            }
+            it.ayatRacineList?.let {
+                setAyatList(it)
             }
         }
     }
 
     private fun setRacine(newData : List<Racine>){
         val update = getCurrentViewStateOrNew()
-        if (update.racineModelList == newData){
+        if (update.racineList == newData){
             return
         }
-        update.racineModelList = newData
+        update.racineList = newData
         setViewState(update)
     }
+
+    private fun setAyatList(newData : List<Ayat>){
+        val update = getCurrentViewStateOrNew()
+        if (update.ayatRacineList == newData){
+            return
+        }
+        update.ayatRacineList= newData
+        setViewState(update)
+    }
+    fun setAyat(newData : Ayat){
+        val update = getCurrentViewStateOrNew()
+        if (update.selectedAyat == newData){
+            return
+        }
+        update.selectedAyat= newData
+        setViewState(update)
+    }
+
     fun clearRacineSearch(){
         setRacine(emptyList())
     }
@@ -58,6 +80,12 @@ class MainViewModel(
                 repository.searchByRacine(
                     stateEvent = stateEvent ,
                     query = stateEvent.query
+                )
+            }
+            is GetAyatRacine ->{
+                repository.searchAyatByRacine(
+                    stateEvent = stateEvent ,
+                    racineId = stateEvent.racineId
                 )
             }
 

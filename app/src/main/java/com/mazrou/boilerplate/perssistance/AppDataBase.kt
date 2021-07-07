@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.mazrou.boilerplate.model.database.Ayat
+import com.mazrou.boilerplate.model.database.AyatModel
 import com.mazrou.boilerplate.model.database.RacineModel
 import com.mazrou.boilerplate.model.database.Surah
 import com.mazrou.boilerplate.model.database.World
@@ -13,7 +13,7 @@ import com.mazrou.boilerplate.model.database.World
 @Database(
     entities = [
         Surah::class ,
-        Ayat::class ,
+        AyatModel::class ,
         RacineModel::class ,
         World::class],
     version = 1

@@ -1,45 +1,32 @@
 package com.mazrou.boilerplate.network
 
-
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.mazrou.boilerplate.model.database.AyatModel
 import com.mazrou.boilerplate.model.database.RacineModel
 import com.mazrou.boilerplate.model.database.Surah
 import com.mazrou.boilerplate.model.database.World
+import com.mazrou.boilerplate.model.ui.Tafseer
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 
+const val BASE_URL_TAFSEER = "http://api.quran-tafseer.com/"
+interface TafseerWebService  {
 
-const val BASE_URL = "https://json-server-api22.herokuapp.com"
-
-interface WebService {
-
-    @GET("/ayah")
-    suspend fun getAllAyat(
-    ): List<AyatModel>
-
-    @GET("/surah ")
-    suspend fun getAllSurah(
-    ): List<Surah>
-
-
-    @GET("/mots")
-    suspend fun getAllWorlds(
-    ): List<World>
-
-    @GET("/racines")
-    suspend fun getAllRacine(
-    ): List<RacineModel>
-
-
+    @GET("/tafseer/{tafseer_id}/{surah_number}/{ayah_number}")
+    suspend fun getAyatTafseer(
+        @Path("tafseer_id") tafseerId  : Int = 1 ,
+        @Path("surah_number") surahNumber  : Int  ,
+        @Path("ayah_number") ayatNumber  : Int  ,
+    ): Tafseer
 
     companion object {
 
-        fun invoke(): WebService {
+        fun invoke(): TafseerWebService {
 
             val gson: Gson = GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
@@ -61,11 +48,11 @@ interface WebService {
 
 
             return Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(BASE_URL_TAFSEER)
                 .client(httpClient.build())
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()
-                .create(WebService::class.java)
+                .create(TafseerWebService::class.java)
         }
     }
 }

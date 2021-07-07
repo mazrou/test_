@@ -7,28 +7,26 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.mazrou.boilerplate.R
-
+import com.mazrou.boilerplate.model.ui.Ayat
 import com.mazrou.boilerplate.model.ui.Racine
+import kotlinx.android.synthetic.main.ayat_layout.view.*
 
-import kotlinx.android.synthetic.main.racine_layout.view.*
-
-
-class SearchListAdapter(
-  private var interaction: Interaction? = null,
+class AyatListAdapter (
+    private var interaction: SearchListAdapter.Interaction? = null,
 )   : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Racine>() {
+    private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Ayat>() {
 
         override fun areItemsTheSame(
-            oldItem: Racine,
-            newItem: Racine
+            oldItem: Ayat,
+            newItem: Ayat
         ): Boolean {
-            return oldItem.id == newItem.id
+            return oldItem.text == newItem.text
         }
 
         override fun areContentsTheSame(
-            oldItem: Racine,
-            newItem: Racine
+            oldItem: Ayat,
+            newItem: Ayat
         ): Boolean {
             return oldItem == newItem
         }
@@ -38,9 +36,9 @@ class SearchListAdapter(
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return RacineViewHolder(
+        return AyatViewHolder(
             LayoutInflater.from(parent.context).inflate(
-                R.layout.racine_layout,
+                R.layout.ayat_layout,
                 parent,
                 false
             ),
@@ -50,7 +48,7 @@ class SearchListAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is RacineViewHolder -> {
+            is AyatViewHolder -> {
                 holder.bind(differ.currentList[position])
             }
         }
@@ -58,26 +56,24 @@ class SearchListAdapter(
 
     override fun getItemCount(): Int = differ.currentList.size
 
-    fun submitList(list: List<Racine>) {
+    fun submitList(list: List<Ayat>) {
         differ.submitList(list)
     }
 
-    inner class RacineViewHolder constructor(
+    inner class AyatViewHolder constructor(
         itemView: View,
-        private val interaction: Interaction?,
+        private val interaction: SearchListAdapter.Interaction?,
     ) : RecyclerView.ViewHolder(itemView) {
 
-        fun bind(item: Racine) = with(itemView) {
-            racine_txt_view.text = item.racine
-            number_of_world_txt_view.text = item.worldNumber
-            number_letter_txt_view.text = item.letterNumber
+        fun bind(item: Ayat) = with(itemView) {
+            surah_name_txt_view.text = "سورة${item.surahName}"
+            ayat_txt_view.text = item.text + " (${item.ayatNumber})"
+
             setOnClickListener {
                 interaction?.onItemClicked(item , adapterPosition)
             }
         }
     }
-    interface Interaction{
-        fun onItemClicked (item : Any , index : Int)
-    }
+
 
 }

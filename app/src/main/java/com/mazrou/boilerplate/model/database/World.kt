@@ -14,7 +14,7 @@ import com.google.gson.annotations.SerializedName
                 onDelete = androidx.room.ForeignKey.CASCADE
             ) ,
             androidx.room.ForeignKey(
-                entity = Ayat::class,
+                entity = AyatModel::class,
                 parentColumns = ["id"],
                 childColumns = ["ayatID"],
                 onDelete = androidx.room.ForeignKey.CASCADE

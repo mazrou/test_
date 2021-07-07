@@ -2,11 +2,13 @@ package com.mazrou.boilerplate.repository.main
 
 
 import android.util.Log
-import com.mazrou.boilerplate.model.database.Ayat
+import com.mazrou.boilerplate.model.database.AyatModel
 import com.mazrou.boilerplate.model.database.RacineModel
 import com.mazrou.boilerplate.model.database.Surah
 import com.mazrou.boilerplate.model.database.World
+import com.mazrou.boilerplate.model.ui.Ayat
 import com.mazrou.boilerplate.model.ui.Racine
+import com.mazrou.boilerplate.network.TafseerWebService
 import com.mazrou.boilerplate.network.WebService
 import com.mazrou.boilerplate.perssistance.QuranDao
 import com.mazrou.boilerplate.repository.safeApiCall
@@ -22,6 +24,7 @@ import kotlinx.coroutines.launch
 class RepositoryImpl(
     private val webService: WebService,
     val quranDao: QuranDao,
+    val tafseerWebService: TafseerWebService
 ) : Repository {
 
     private val TAG: String = "AppDebug"
@@ -68,11 +71,11 @@ class RepositoryImpl(
             webService.getAllAyat()
         }
         emit(
-            object : ApiResponseHandler<MainViewState, List<Ayat>>(
+            object : ApiResponseHandler<MainViewState, List<AyatModel>>(
                 response = apiResult,
                 stateEvent = stateEvent
             ) {
-                override suspend fun handleSuccess(resultObj: List<Ayat>): DataState<MainViewState> {
+                override suspend fun handleSuccess(resultObj: List<AyatModel>): DataState<MainViewState> {
                     CoroutineScope(IO).launch {
                         for (ayat in resultObj) {
                             launch {
@@ -170,7 +173,7 @@ class RepositoryImpl(
                 override suspend fun handleSuccess(resultObj: List<Racine>?): DataState<MainViewState> {
                     return DataState.data(
                         data = MainViewState(
-                            racineModelList =  resultObj
+                            racineList =  resultObj
                         ),
                         stateEvent = stateEvent,
                         response = null
@@ -178,5 +181,32 @@ class RepositoryImpl(
                 }
             }.getResult()
         )
+    }
+
+    override fun searchAyatByRacine(
+        stateEvent: StateEvent,
+        racineId: String
+    ): Flow<DataState<MainViewState>> = flow{
+        val cacheRequest =  safeCacheCall(IO){
+            quranDao.searchAyatByRacine(racineId)
+        }
+        emit(
+            object : CacheResponseHandler<MainViewState , List<Ayat>?>(
+                stateEvent = stateEvent ,
+                response = cacheRequest
+            ){
+                override suspend fun handleSuccess(resultObj: List<Ayat>?): DataState<MainViewState> {
+                    Log.e(TAG , "list of the ayat is : ${resultObj}")
+                    return DataState.data(
+                        data = MainViewState(
+                            ayatRacineList =  resultObj
+                        ),
+                        stateEvent = stateEvent,
+                        response = null
+                    )
+                }
+            }.getResult()
+        )
+
     }
 }

@@ -17,7 +17,7 @@ import com.google.gson.annotations.SerializedName
         )
     ]
 )
-data class Ayat(
+data class AyatModel(
     @Expose
     @SerializedName("id")
     @PrimaryKey(autoGenerate = false)

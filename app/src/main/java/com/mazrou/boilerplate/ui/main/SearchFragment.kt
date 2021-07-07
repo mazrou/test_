@@ -3,8 +3,10 @@ package com.mazrou.boilerplate.ui.main
 import android.os.Bundle
 import android.view.View
 import androidx.core.widget.doOnTextChanged
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mazrou.boilerplate.R
+import com.mazrou.boilerplate.model.ui.Racine
 import com.mazrou.boilerplate.ui.main.state.MainStateEvent.*
 import com.mazrou.boilerplate.util.StateEvent
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -43,7 +45,7 @@ class SearchFragment : BaseMainFragment(R.layout.fragment_search)  , SearchListA
             }
         }
         viewModel.viewState.observe(viewLifecycleOwner ,{
-            it.racineModelList?.let {
+            it.racineList?.let {
                 number_of_result_txt_view.text = it.size.toString()
                 searchAdapter.submitList(it)
             }
@@ -62,6 +64,12 @@ class SearchFragment : BaseMainFragment(R.layout.fragment_search)  , SearchListA
       //  }
     }
     override fun onItemClicked(item: Any, index: Int) {
+        when( item){
+            is  Racine ->{
+                viewModel.setStateEvent(GetAyatRacine(item.id))
+                findNavController().navigate(R.id.nav_to_ayat_list)
+            }
+        }
 
     }
 }

@@ -1,5 +1,6 @@
 package com.mazrou.boilerplate.repository.main
 
+import com.mazrou.boilerplate.model.ui.Racine
 import com.mazrou.boilerplate.ui.main.state.MainViewState
 import com.mazrou.boilerplate.util.DataState
 import com.mazrou.boilerplate.util.StateEvent
@@ -26,6 +27,11 @@ interface Repository  {
     fun searchByRacine(
         stateEvent: StateEvent ,
         query : String
+    ): Flow<DataState<MainViewState>>
+
+    fun searchAyatByRacine(
+        stateEvent: StateEvent ,
+        racineId : String
     ): Flow<DataState<MainViewState>>
 
 }
