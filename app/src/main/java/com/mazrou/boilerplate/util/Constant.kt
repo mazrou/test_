@@ -64,3 +64,12 @@ class Constants {
         }
     }
 }
+
+
+fun List<*>.toListString() : List<String>{
+    val result = mutableListOf<String>()
+    for (item in this ){
+        result.add(item.toString())
+    }
+    return result
+}

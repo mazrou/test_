@@ -10,6 +10,7 @@ import com.mazrou.boilerplate.model.database.Surah
 import com.mazrou.boilerplate.model.database.World
 import com.mazrou.boilerplate.model.ui.Ayat
 import com.mazrou.boilerplate.model.ui.Racine
+import com.mazrou.boilerplate.model.ui.TafseerBook
 
 
 @Dao
@@ -33,7 +34,12 @@ interface QuranDao {
     @Query("SELECT id, racine ,letterNumber, count(*) worldNumber FROM (SELECT * FROM racine r JOIN world w ON w.idRacine = r.id AND racine LIKE :query || '%') GROUP BY racine")
     suspend fun searchByRacineUi(query: String): List<Racine>
 
-// SELECT arabicWord , text , surahName FROM racine  r JOIN world  w ON w.idRacine = r.id AND r.id = 553 JOIN ayat  a ON w.ayatID =a.id JOIN surah s on s.id = a.idSurah
-    @Query("SELECT arabicWord ,englishWord , text , surahName , a.ayatNumber FROM racine  r JOIN world  w ON w.idRacine = r.id AND r.id = :racineId JOIN ayat  a ON w.ayatID =a.id JOIN surah s on s.id = a.idSurah")
+    @Query("SELECT arabicWord ,englishWord , text , surahName , a.ayatNumber  , s.id  FROM racine  r JOIN world  w ON w.idRacine = r.id AND r.id = :racineId JOIN ayat  a ON w.ayatID =a.id JOIN surah s on s.id = a.idSurah")
     suspend fun searchAyatByRacine(racineId : String) : List<Ayat>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTafseerBook(tafseerBook: TafseerBook): Long
+
+    @Query("SELECT * FROM tafseer_book")
+    suspend fun getAllTafseerBook() : List<TafseerBook>
 }

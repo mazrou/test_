@@ -9,6 +9,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mazrou.boilerplate.R
 import com.mazrou.boilerplate.model.ui.Ayat
+import com.mazrou.boilerplate.ui.main.state.MainStateEvent
+import com.mazrou.boilerplate.ui.main.state.MainStateEvent.*
 import kotlinx.android.synthetic.main.fragment_ayat_list.*
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -48,6 +50,7 @@ class AyatListFragment : BaseMainFragment(R.layout.fragment_ayat_list) ,SearchLi
         when(item ){
             is Ayat -> {
                 viewModel.setAyat(item)
+                viewModel.setStateEvent(GetTafseerAyat(ayat = item))
                 findNavController().navigate(R.id.to_ayat_details)
             }
         }

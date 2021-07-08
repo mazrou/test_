@@ -8,15 +8,20 @@ import com.mazrou.boilerplate.model.database.Surah
 import com.mazrou.boilerplate.model.database.World
 import com.mazrou.boilerplate.model.ui.Ayat
 import com.mazrou.boilerplate.model.ui.Racine
+import com.mazrou.boilerplate.model.ui.Tafseer
+import com.mazrou.boilerplate.model.ui.TafseerBook
 import com.mazrou.boilerplate.network.TafseerWebService
 import com.mazrou.boilerplate.network.WebService
 import com.mazrou.boilerplate.perssistance.QuranDao
+import com.mazrou.boilerplate.repository.NetworkBoundResource
 import com.mazrou.boilerplate.repository.safeApiCall
 import com.mazrou.boilerplate.repository.safeCacheCall
+import com.mazrou.boilerplate.ui.main.state.AyatDetails
 import com.mazrou.boilerplate.ui.main.state.MainViewState
 import com.mazrou.boilerplate.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -196,7 +201,7 @@ class RepositoryImpl(
                 response = cacheRequest
             ){
                 override suspend fun handleSuccess(resultObj: List<Ayat>?): DataState<MainViewState> {
-                    Log.e(TAG , "list of the ayat is : ${resultObj}")
+
                     return DataState.data(
                         data = MainViewState(
                             ayatRacineList =  resultObj
@@ -208,5 +213,66 @@ class RepositoryImpl(
             }.getResult()
         )
 
+    }
+
+    override fun getAyatTafseer(
+        stateEvent: StateEvent,
+        ayat: Ayat ,
+        tafseerBookId: Int
+    ): Flow<DataState<MainViewState>> = flow{
+        val webRequest =  safeApiCall(IO){
+            tafseerWebService.getAyatTafseer(
+                tafseerId = tafseerBookId ,
+                surahNumber = ayat.id,
+                ayatNumber = ayat.ayatNumber
+            )
+        }
+        emit(
+            object : ApiResponseHandler<MainViewState ,Tafseer >(
+                stateEvent = stateEvent ,
+                response = webRequest
+            ){
+                override suspend fun handleSuccess(resultObj: Tafseer): DataState<MainViewState> {
+                    return DataState.data(
+                        data = MainViewState(
+                            selectedAyat = AyatDetails(tafseer = resultObj)
+                        ),
+                        stateEvent = stateEvent,
+                        response = null
+                    )
+                }
+            }.getResult()
+        )
+
+    }
+
+    @FlowPreview
+    override fun getTafseerBook(stateEvent: StateEvent): Flow<DataState<MainViewState>> {
+        return object :NetworkBoundResource<List<TafseerBook> ,List<TafseerBook> ,MainViewState >(
+            dispatcher = IO ,
+            stateEvent = stateEvent ,
+            apiCall = {tafseerWebService.getAllTafseer()} ,
+            cacheCall = {quranDao.getAllTafseerBook()}
+        ){
+            override suspend fun updateCache(networkObject: List<TafseerBook>) {
+              CoroutineScope(IO).launch {
+                  for (item in networkObject){
+                        launch {
+                            quranDao.insertTafseerBook(tafseerBook = item)
+                        }
+                  }
+              }
+            }
+            override fun handleCacheSuccess(resultObj: List<TafseerBook>): DataState<MainViewState> {
+                return DataState.data(
+                    data = MainViewState(
+                        tafseerBooks = resultObj
+                    ),
+                    stateEvent = stateEvent,
+                    response = null
+                )
+            }
+
+        }.result
     }
 }

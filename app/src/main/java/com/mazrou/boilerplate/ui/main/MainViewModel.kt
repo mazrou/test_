@@ -4,8 +4,11 @@ package com.mazrou.boilerplate.ui.main
 import android.util.Log
 import com.mazrou.boilerplate.model.ui.Ayat
 import com.mazrou.boilerplate.model.ui.Racine
+import com.mazrou.boilerplate.model.ui.Tafseer
+import com.mazrou.boilerplate.model.ui.TafseerBook
 import com.mazrou.boilerplate.repository.main.Repository
 import com.mazrou.boilerplate.ui.BaseViewModel
+import com.mazrou.boilerplate.ui.main.state.AyatDetails
 import com.mazrou.boilerplate.ui.main.state.MainStateEvent.*
 import com.mazrou.boilerplate.ui.main.state.MainViewState
 import com.mazrou.boilerplate.util.*
@@ -29,7 +32,25 @@ class MainViewModel(
             it.ayatRacineList?.let {
                 setAyatList(it)
             }
+            it.selectedAyat?.let {
+                it.tafseer?.let { tafseer ->
+                    setTafseer(tafseer)
+
+                }
+            }
+            it.tafseerBooks?.let{
+                setTafseerBook(it)
+            }
         }
+    }
+
+    private fun setTafseerBook(newData: List<TafseerBook>) {
+        val update = getCurrentViewStateOrNew()
+        if (update.tafseerBooks == newData){
+            return
+        }
+        update.tafseerBooks = newData
+        setViewState(update)
     }
 
     private fun setRacine(newData : List<Racine>){
@@ -51,11 +72,32 @@ class MainViewModel(
     }
     fun setAyat(newData : Ayat){
         val update = getCurrentViewStateOrNew()
-        if (update.selectedAyat == newData){
-            return
+
+        update.selectedAyat?.let{
+            if (update.selectedAyat?.ayat == newData){
+                return
+            }
+            it.ayat= newData
+            setViewState(update)
+        }?: run {
+            update.selectedAyat= AyatDetails(ayat = newData)
+            setViewState(update)
         }
-        update.selectedAyat= newData
-        setViewState(update)
+    }
+
+    private fun setTafseer(newData : Tafseer){
+        val update = getCurrentViewStateOrNew()
+
+        update.selectedAyat?.let{
+            if (update.selectedAyat?.tafseer == newData){
+                return
+            }
+            it.tafseer= newData
+            setViewState(update)
+        }?: run {
+            update.selectedAyat= AyatDetails(tafseer = newData)
+            setViewState(update)
+        }
     }
 
     fun clearRacineSearch(){
@@ -86,6 +128,20 @@ class MainViewModel(
                 repository.searchAyatByRacine(
                     stateEvent = stateEvent ,
                     racineId = stateEvent.racineId
+                )
+            }
+
+            is GetTafseerAyat -> {
+                repository.getAyatTafseer(
+                    stateEvent =  stateEvent ,
+                    ayat = stateEvent.ayat ,
+                    tafseerBookId = stateEvent.tafseerId
+                )
+            }
+
+            is GetTafseerBooks -> {
+                repository.getTafseerBook(
+                    stateEvent = stateEvent
                 )
             }
 

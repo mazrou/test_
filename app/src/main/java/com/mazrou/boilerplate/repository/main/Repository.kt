@@ -1,5 +1,6 @@
 package com.mazrou.boilerplate.repository.main
 
+import com.mazrou.boilerplate.model.ui.Ayat
 import com.mazrou.boilerplate.model.ui.Racine
 import com.mazrou.boilerplate.ui.main.state.MainViewState
 import com.mazrou.boilerplate.util.DataState
@@ -32,6 +33,16 @@ interface Repository  {
     fun searchAyatByRacine(
         stateEvent: StateEvent ,
         racineId : String
+    ): Flow<DataState<MainViewState>>
+
+    fun getAyatTafseer(
+        stateEvent: StateEvent ,
+        ayat: Ayat,
+        tafseerBookId : Int
+    ): Flow<DataState<MainViewState>>
+
+    fun getTafseerBook(
+        stateEvent: StateEvent
     ): Flow<DataState<MainViewState>>
 
 }

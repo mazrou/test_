@@ -8,6 +8,7 @@ import com.mazrou.boilerplate.model.database.AyatModel
 import com.mazrou.boilerplate.model.database.RacineModel
 import com.mazrou.boilerplate.model.database.Surah
 import com.mazrou.boilerplate.model.database.World
+import com.mazrou.boilerplate.model.ui.TafseerBook
 
 
 @Database(
@@ -15,8 +16,9 @@ import com.mazrou.boilerplate.model.database.World
         Surah::class ,
         AyatModel::class ,
         RacineModel::class ,
-        World::class],
-    version = 1
+        World::class ,
+        TafseerBook::class],
+    version = 2
 )
 abstract class AppDataBase : RoomDatabase() {
 

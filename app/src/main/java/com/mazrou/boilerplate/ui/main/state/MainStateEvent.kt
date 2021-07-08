@@ -1,5 +1,6 @@
 package com.mazrou.boilerplate.ui.main.state
 
+import com.mazrou.boilerplate.model.ui.Ayat
 import com.mazrou.boilerplate.model.ui.Racine
 import com.mazrou.boilerplate.util.StateEvent
 
@@ -20,5 +21,15 @@ sealed class MainStateEvent : StateEvent {
     class GetAyatRacine(
         val racineId : String
     ): MainStateEvent()
+
+    class GetTafseerAyat(
+        val ayat : Ayat ,
+        val tafseerId : Int = 1
+    ): MainStateEvent()
+
+    class GetTafseerBooks(
+    ): MainStateEvent()
+
+
     class None: MainStateEvent()
 }

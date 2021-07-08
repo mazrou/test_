@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import com.mazrou.boilerplate.R
 import com.mazrou.boilerplate.ui.BaseActivity
 import com.mazrou.boilerplate.ui.main.state.MainStateEvent
+import com.mazrou.boilerplate.ui.main.state.MainStateEvent.GetTafseerBooks
 import com.mazrou.boilerplate.util.StateEvent
 import com.mazrou.boilerplate.util.StateMessageCallback
 import kotlinx.android.synthetic.main.activity_main.*
@@ -48,7 +49,9 @@ class MainActivity : BaseActivity() , KodeinAware {
 
         sharedPref = getPreferences(Context.MODE_PRIVATE)
 
-
+        viewModel.setStateEvent(
+            GetTafseerBooks()
+        )
 
         subscribeObservers()
     }

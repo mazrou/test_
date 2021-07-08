@@ -1,40 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="30dp"
+    android:paddingHorizontal="20dp"
+    android:orientation="vertical"
     android:paddingTop="30dp"
+    android:fillViewport="true"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.main.AyatDetailsFragment">
 
-    <TextView
-        android:id="@+id/surah_name_txt_view"
-        android:layout_width="wrap_content"
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="7dp"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_width="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/surah_name_txt_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:gravity="end"
+            android:text="dfdfdfdf"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="7dp"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            app:cardCornerRadius="6dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:background="#EFEFEF"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/ayat_txt_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginHorizontal="7dp"
+                    android:layout_marginVertical="10dp"
+                    android:layout_gravity="center"
+                    android:textColor="#446173"
+                    android:singleLine="false"
+                    android:textSize="17sp"
+                    />
+            </FrameLayout>
+
+        </androidx.cardview.widget.CardView>
 
 
-    <TextView
-        android:id="@+id/ayat_txt_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"
-        android:singleLine="false"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/surah_name_txt_view"
-        app:layout_constraintVertical_bias="1.0" />
 
+        <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+            android:id="@+id/searchable__tafseer_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:gravity="end"
+            app:hintText="التفسير الميسر"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            app:cardCornerRadius="6dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:background="#EFEFEF"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="7dp"
+                android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/tafseer_txt_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_gravity="center"
+
+                android:textSize="14.6sp"
+                />
+            </FrameLayout>
+        </androidx.cardview.widget.CardView>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</ScrollView>

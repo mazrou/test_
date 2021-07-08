@@ -7,6 +7,7 @@ import com.mazrou.boilerplate.model.database.RacineModel
 import com.mazrou.boilerplate.model.database.Surah
 import com.mazrou.boilerplate.model.database.World
 import com.mazrou.boilerplate.model.ui.Tafseer
+import com.mazrou.boilerplate.model.ui.TafseerBook
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -23,6 +24,11 @@ interface TafseerWebService  {
         @Path("surah_number") surahNumber  : Int  ,
         @Path("ayah_number") ayatNumber  : Int  ,
     ): Tafseer
+
+
+   @GET("/tafseer")
+    suspend fun getAllTafseer(
+    ): List<TafseerBook>
 
     companion object {
 

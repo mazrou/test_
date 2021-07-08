@@ -46,8 +46,13 @@ class SearchFragment : BaseMainFragment(R.layout.fragment_search)  , SearchListA
         }
         viewModel.viewState.observe(viewLifecycleOwner ,{
             it.racineList?.let {
+                racine_recycler_view.visibility = View.VISIBLE
+                card_view.visibility = View.GONE
                 number_of_result_txt_view.text = it.size.toString()
                 searchAdapter.submitList(it)
+            }?: run {
+                racine_recycler_view.visibility = View.GONE
+                card_view.visibility = View.VISIBLE
             }
         })
     }
