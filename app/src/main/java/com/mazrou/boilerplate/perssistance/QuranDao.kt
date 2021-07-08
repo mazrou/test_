@@ -4,10 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.mazrou.boilerplate.model.database.AyatModel
-import com.mazrou.boilerplate.model.database.RacineModel
-import com.mazrou.boilerplate.model.database.Surah
-import com.mazrou.boilerplate.model.database.World
+import com.mazrou.boilerplate.model.database.*
 import com.mazrou.boilerplate.model.ui.Ayat
 import com.mazrou.boilerplate.model.ui.Racine
 import com.mazrou.boilerplate.model.ui.TafseerBook
@@ -34,12 +31,20 @@ interface QuranDao {
     @Query("SELECT id, racine ,letterNumber, count(*) worldNumber FROM (SELECT * FROM racine r JOIN world w ON w.idRacine = r.id AND racine LIKE :query || '%') GROUP BY racine")
     suspend fun searchByRacineUi(query: String): List<Racine>
 
-    @Query("SELECT arabicWord ,englishWord , text , surahName , a.ayatNumber  , s.id  FROM racine  r JOIN world  w ON w.idRacine = r.id AND r.id = :racineId JOIN ayat  a ON w.ayatID =a.id JOIN surah s on s.id = a.idSurah")
+    @Query("SELECT arabicWord ,englishWord , text , surahName , a.ayatNumber  , s.id as idSurah FROM racine  r JOIN world  w ON w.idRacine = r.id AND r.id = :racineId JOIN ayat  a ON w.ayatID =a.id JOIN surah s on s.id = a.idSurah")
     suspend fun searchAyatByRacine(racineId : String) : List<Ayat>
+    @Query("SELECT sum(ayatNumber) ayaId from surah as s  WHERE id+0 < :surahId")
+    suspend fun getAyatId(surahId : Int ) : Int
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTafseerBook(tafseerBook: TafseerBook): Long
 
     @Query("SELECT * FROM tafseer_book")
     suspend fun getAllTafseerBook() : List<TafseerBook>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertReader(reader: Reader): Long
+
+    @Query("SELECT * FROM reader")
+    suspend fun getAllReaders() : List<Reader>
 }

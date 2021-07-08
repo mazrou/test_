@@ -9,11 +9,14 @@ import androidx.lifecycle.Observer
 import com.mazrou.boilerplate.R
 import com.mazrou.boilerplate.ui.BaseActivity
 import com.mazrou.boilerplate.ui.main.state.MainStateEvent
+import com.mazrou.boilerplate.ui.main.state.MainStateEvent.GetReaders
 import com.mazrou.boilerplate.ui.main.state.MainStateEvent.GetTafseerBooks
 import com.mazrou.boilerplate.util.StateEvent
 import com.mazrou.boilerplate.util.StateMessageCallback
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
@@ -49,9 +52,12 @@ class MainActivity : BaseActivity() , KodeinAware {
 
         sharedPref = getPreferences(Context.MODE_PRIVATE)
 
-        viewModel.setStateEvent(
-            GetTafseerBooks()
-        )
+      //  viewModel.setStateEvent(GetTafseerBooks())
+       /* CoroutineScope(IO).launch {
+            delay(10000)
+            viewModel.setStateEvent(GetReaders())
+        }*/
+        viewModel.setStateEvent(GetTafseerBooks())
 
         subscribeObservers()
     }

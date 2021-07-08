@@ -30,6 +30,14 @@ sealed class MainStateEvent : StateEvent {
     class GetTafseerBooks(
     ): MainStateEvent()
 
+  class GetReaders(
+    ): MainStateEvent()
+
+    class GetAyatId(
+        val surahId : String ,
+        val ayatNumber : Int
+    ): MainStateEvent()
+
 
     class None: MainStateEvent()
 }

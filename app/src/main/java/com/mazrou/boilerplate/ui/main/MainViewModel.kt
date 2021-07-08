@@ -2,6 +2,7 @@ package com.mazrou.boilerplate.ui.main
 
 
 import android.util.Log
+import com.mazrou.boilerplate.model.database.Reader
 import com.mazrou.boilerplate.model.ui.Ayat
 import com.mazrou.boilerplate.model.ui.Racine
 import com.mazrou.boilerplate.model.ui.Tafseer
@@ -35,11 +36,16 @@ class MainViewModel(
             it.selectedAyat?.let {
                 it.tafseer?.let { tafseer ->
                     setTafseer(tafseer)
-
+                }
+                it.ayatId?.let { ayatId ->
+                    setSelectedAyatIt(ayatId)
                 }
             }
             it.tafseerBooks?.let{
                 setTafseerBook(it)
+            }
+            it.readers?.let {
+                setReaders(it)
             }
         }
     }
@@ -50,6 +56,14 @@ class MainViewModel(
             return
         }
         update.tafseerBooks = newData
+        setViewState(update)
+    }
+    private fun setReaders(newData: List<Reader>) {
+        val update = getCurrentViewStateOrNew()
+        if (update.readers == newData){
+            return
+        }
+        update.readers = newData
         setViewState(update)
     }
 
@@ -100,6 +114,21 @@ class MainViewModel(
         }
     }
 
+     fun setSelectedAyatIt(newData : Int){
+        val update = getCurrentViewStateOrNew()
+        Log.e("AppDEbuging", newData.toString())
+        update.selectedAyat?.let{
+            if (update.selectedAyat?.ayatId == newData){
+                return
+            }
+            it.ayatId= newData
+            setViewState(update)
+        }?: run {
+            update.selectedAyat= AyatDetails(ayatId = newData)
+            setViewState(update)
+        }
+    }
+
     fun clearRacineSearch(){
         setRacine(emptyList())
     }
@@ -138,10 +167,22 @@ class MainViewModel(
                     tafseerBookId = stateEvent.tafseerId
                 )
             }
+            is GetReaders -> {
+                repository.getAllReaders(
+                    stateEvent = stateEvent
+                )
+            }
 
             is GetTafseerBooks -> {
                 repository.getTafseerBook(
                     stateEvent = stateEvent
+                )
+            }
+            is GetAyatId -> {
+                repository.getAyatId(
+                    stateEvent = stateEvent ,
+                    surahId = stateEvent.surahId ,
+                    ayatId = stateEvent.ayatNumber
                 )
             }
 

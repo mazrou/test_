@@ -45,4 +45,14 @@ interface Repository  {
         stateEvent: StateEvent
     ): Flow<DataState<MainViewState>>
 
+    fun getAyatId(
+        stateEvent: StateEvent ,
+        surahId: String ,
+        ayatId : Int
+    ): Flow<DataState<MainViewState>>
+
+    fun getAllReaders(
+        stateEvent: StateEvent ,
+    ): Flow<DataState<MainViewState>>
+
 }

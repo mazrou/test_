@@ -8,5 +8,7 @@
     </base-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">api.quran-tafseer.com</domain>
+        <domain includeSubdomains="true">cdn.alquran.cloud</domain>
+        <domain includeSubdomains="true">api.alquran.cloud</domain>
     </domain-config>
 </network-security-config>

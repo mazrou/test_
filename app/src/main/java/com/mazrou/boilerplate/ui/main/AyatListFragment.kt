@@ -28,6 +28,8 @@ class AyatListFragment : BaseMainFragment(R.layout.fragment_ayat_list) ,SearchLi
         listAdapter = AyatListAdapter(this)
         initView ()
         subscribeObservers()
+
+        viewModel.setStateEvent(GetReaders())
     }
 
     private fun initView (){
@@ -51,6 +53,7 @@ class AyatListFragment : BaseMainFragment(R.layout.fragment_ayat_list) ,SearchLi
             is Ayat -> {
                 viewModel.setAyat(item)
                 viewModel.setStateEvent(GetTafseerAyat(ayat = item))
+                viewModel.setStateEvent(GetAyatId(surahId = item.idSurah.toString() , ayatNumber = item.ayatNumber))
                 findNavController().navigate(R.id.to_ayat_details)
             }
         }

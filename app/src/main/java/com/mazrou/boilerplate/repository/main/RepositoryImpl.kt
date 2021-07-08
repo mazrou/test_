@@ -2,16 +2,15 @@ package com.mazrou.boilerplate.repository.main
 
 
 import android.util.Log
-import com.mazrou.boilerplate.model.database.AyatModel
-import com.mazrou.boilerplate.model.database.RacineModel
-import com.mazrou.boilerplate.model.database.Surah
-import com.mazrou.boilerplate.model.database.World
+import com.mazrou.boilerplate.model.database.*
 import com.mazrou.boilerplate.model.ui.Ayat
 import com.mazrou.boilerplate.model.ui.Racine
 import com.mazrou.boilerplate.model.ui.Tafseer
 import com.mazrou.boilerplate.model.ui.TafseerBook
+import com.mazrou.boilerplate.network.ReadQuranWebService
 import com.mazrou.boilerplate.network.TafseerWebService
 import com.mazrou.boilerplate.network.WebService
+import com.mazrou.boilerplate.network.network_response.ReaderResponse
 import com.mazrou.boilerplate.perssistance.QuranDao
 import com.mazrou.boilerplate.repository.NetworkBoundResource
 import com.mazrou.boilerplate.repository.safeApiCall
@@ -21,6 +20,7 @@ import com.mazrou.boilerplate.ui.main.state.MainViewState
 import com.mazrou.boilerplate.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 class RepositoryImpl(
     private val webService: WebService,
     val quranDao: QuranDao,
+    val readQuranWebService: ReadQuranWebService,
     val tafseerWebService: TafseerWebService
 ) : Repository {
 
@@ -223,7 +224,7 @@ class RepositoryImpl(
         val webRequest =  safeApiCall(IO){
             tafseerWebService.getAyatTafseer(
                 tafseerId = tafseerBookId ,
-                surahNumber = ayat.id,
+                surahNumber = ayat.idSurah,
                 ayatNumber = ayat.ayatNumber
             )
         }
@@ -261,6 +262,7 @@ class RepositoryImpl(
                             quranDao.insertTafseerBook(tafseerBook = item)
                         }
                   }
+
               }
             }
             override fun handleCacheSuccess(resultObj: List<TafseerBook>): DataState<MainViewState> {
@@ -275,4 +277,67 @@ class RepositoryImpl(
 
         }.result
     }
+
+    override fun getAyatId(
+        stateEvent: StateEvent,
+        surahId: String,
+        ayatId: Int
+    ): Flow<DataState<MainViewState>> = flow{
+
+        val webRequest =  safeCacheCall(IO){
+            quranDao.getAyatId(
+                surahId = surahId.toInt()
+            )
+        }
+        emit(
+            object : CacheResponseHandler<MainViewState ,Int >(
+                stateEvent = stateEvent ,
+                response = webRequest
+            ){
+                override suspend fun handleSuccess(resultObj: Int): DataState<MainViewState> {
+                    Log.e(TAG , "hada surah = ${surahId} o hada aya = $ayatId = ${resultObj + ayatId}" )
+                    return DataState.data(
+                        data = MainViewState(
+                            selectedAyat = AyatDetails(ayatId = resultObj + ayatId)
+                        ),
+                        stateEvent = stateEvent,
+                        response = null
+                    )
+                }
+            }.getResult()
+        )
+    }
+
+    @ExperimentalCoroutinesApi
+    @FlowPreview
+    override fun getAllReaders(stateEvent: StateEvent): Flow<DataState<MainViewState>> {
+
+        return object :NetworkBoundResource<ReaderResponse ,List<Reader> ,MainViewState >(
+            dispatcher = IO ,
+            stateEvent = stateEvent ,
+            apiCall = {readQuranWebService.getAllReaders()} ,
+            cacheCall = {quranDao.getAllReaders()}
+        ){
+            override suspend fun updateCache(networkObject: ReaderResponse) {
+                CoroutineScope(IO).launch {
+                    for (item in networkObject.data){
+                        launch {
+                            quranDao.insertReader(reader = item)
+                        }
+                    }
+                }
+            }
+            override fun handleCacheSuccess(resultObj: List<Reader>): DataState<MainViewState> {
+                return DataState.data(
+                    data = MainViewState(
+                        readers = resultObj
+                    ),
+                    stateEvent = stateEvent,
+                    response = null
+                )
+            }
+
+        }.result
+    }
 }
+

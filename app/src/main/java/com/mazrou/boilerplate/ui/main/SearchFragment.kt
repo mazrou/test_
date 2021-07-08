@@ -7,6 +7,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mazrou.boilerplate.R
 import com.mazrou.boilerplate.model.ui.Racine
+import com.mazrou.boilerplate.ui.BaseActivity
 import com.mazrou.boilerplate.ui.main.state.MainStateEvent.*
 import com.mazrou.boilerplate.util.StateEvent
 import kotlinx.android.synthetic.main.fragment_search.*
@@ -73,6 +74,7 @@ class SearchFragment : BaseMainFragment(R.layout.fragment_search)  , SearchListA
             is  Racine ->{
                 viewModel.setStateEvent(GetAyatRacine(item.id))
                 findNavController().navigate(R.id.nav_to_ayat_list)
+                (requireActivity() as BaseActivity).hideSoftKeyboard()
             }
         }
 

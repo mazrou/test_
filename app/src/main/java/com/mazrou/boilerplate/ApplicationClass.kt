@@ -2,6 +2,7 @@ package com.mazrou.boilerplate
 
 import android.app.Application
 import com.mazrou.boilerplate.di.viewModelModule
+import com.mazrou.boilerplate.network.ReadQuranWebService
 import com.mazrou.boilerplate.network.TafseerWebService
 import com.mazrou.boilerplate.network.WebService
 import com.mazrou.boilerplate.perssistance.AppDataBase
@@ -30,6 +31,9 @@ class ApplicationClass : Application(), KodeinAware {
         bind<WebService>() with singleton { WebService.invoke() }
         // web service
         bind<TafseerWebService>() with singleton { TafseerWebService.invoke() }
+
+        bind<ReadQuranWebService>() with singleton { ReadQuranWebService.invoke() }
+
         // database
         bind<AppDataBase>() with singleton { AppDataBase(context = instance()) }
 
@@ -38,7 +42,8 @@ class ApplicationClass : Application(), KodeinAware {
                 RepositoryImpl(
                     quranDao = instance<AppDataBase>().getQuranDao(),
                     webService = instance() ,
-                    tafseerWebService = instance()
+                    tafseerWebService = instance() ,
+                    readQuranWebService = instance()
                 )
         }
 
